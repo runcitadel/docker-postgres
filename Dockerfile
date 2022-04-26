@@ -1,3 +1,16 @@
-FROM node:16-bullseye-slim
+FROM  postgres:14.2
 
-RUN echo "In a repository, actually do something useful here, this is just to allow builds." && touch examplefile
+ENV PREVIOUS_VERSION 13.6
+RUN cp /etc/apt/sources.list.d/pgdg.list /etc/apt/sources.list.d/pgdg.list.backup && \
+    sed -i "s/$/ $PREVIOUS_VERSION/" /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+    postgresql-$PREVIOUS_VERSION \
+    postgresql-contrib-$PREVIOUS_VERSION && \
+    rm /etc/apt/sources.list.d/pgdg.list && mv /etc/apt/sources.list.d/pgdg.list.backup /etc/apt/sources.list.d/pgdg.list && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY migrate-docker-entrypoint.sh /migrate-docker-entrypoint.sh
+
+ENTRYPOINT ["/migrate-docker-entrypoint.sh"]
+CMD ["postgres"]
