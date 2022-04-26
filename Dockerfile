@@ -1,6 +1,6 @@
 FROM  postgres:14.2
 
-ENV PREVIOUS_VERSION 13.6
+ENV PREVIOUS_VERSION 13
 RUN cp /etc/apt/sources.list.d/pgdg.list /etc/apt/sources.list.d/pgdg.list.backup && \
     sed -i "s/$/ $PREVIOUS_VERSION/" /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
